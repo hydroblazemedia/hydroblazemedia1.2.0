@@ -22,20 +22,32 @@
             --font-body: 'Inter', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Custom cursor active */ }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            /* Removed cursor: none from here for safety */
+        }
+
+        /* Only hide cursor if body has this class (added via JS) */
+        body.custom-cursor-enabled, 
+        body.custom-cursor-enabled * {
+            cursor: none;
+        }
 
         body {
             background: var(--bg);
             color: var(--text);
             font-family: var(--font-body);
             overflow-x: hidden;
-            width: 100vw;
+            width: 100%; /* Changed from 100vw to prevent horizontal scrollbar */
             min-height: 100vh;
         }
 
         /* --- NOISE TEXTURE (Film Grain Effect) --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* Suggestion: Download this SVG and host locally */
             background: url('https://grainy-gradients.vercel.app/noise.svg');
             opacity: 0.05; pointer-events: none; z-index: 9000;
         }
@@ -56,3 +68,63 @@
         .loader-line { width: 0%; height: 1px; background: #555; transition: width 0.1s; }
 
         /* --- 3D CANVAS BACKGROUND --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-wrap">
+            <div class="loader-text">0</div>
+            <div class="percent">%</div>
+        </div>
+        <div class="loader-line"></div>
+    </div>
+
+    <!-- Main Content Placeholder -->
+    <main>
+        <!-- Your content goes here -->
+    </main>
+
+    <!-- Script to handle cursor and preloader -->
+    <script>
+        // Example JS to enable cursor safely
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('custom-cursor-enabled');
+            
+            // Mouse movement logic would go here
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+                
+                // Add slight delay/easing to outline for better effect
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+            });
+        });
+    </script>
+</body>
+</html>
